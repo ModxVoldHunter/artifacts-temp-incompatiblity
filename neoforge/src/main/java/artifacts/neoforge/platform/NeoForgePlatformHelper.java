@@ -35,21 +35,17 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class NeoForgePlatformHelper implements PlatformHelper {
 
     @Override
     public Stream<ItemStack> findAllEquippedBy(LivingEntity entity, Predicate<ItemStack> predicate) {
-        List<ItemStack> armor = new ArrayList<>(4);
-        for (ItemStack stack : entity.getArmorAndBodyArmorSlots()) {
-            if (predicate.test(stack)) {
-                armor.add(stack);
-            }
-        }
+        Stream<ItemStack> armor = StreamSupport.stream(entity.getArmorAndBodyArmorSlots().spliterator(), false).filter(predicate);
         if (ModList.get().isLoaded("curios")) {
-            return Stream.concat(CuriosIntegration.findAllEquippedBy(entity, predicate), armor.stream());
+            return Stream.concat(CuriosIntegration.findAllEquippedBy(entity, predicate), armor);
         }
-        return armor.stream();
+        return armor;
     }
 
     @Override

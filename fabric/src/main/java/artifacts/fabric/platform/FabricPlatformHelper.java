@@ -37,22 +37,18 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class FabricPlatformHelper implements PlatformHelper {
 
     @Override
     public Stream<ItemStack> findAllEquippedBy(LivingEntity entity, Predicate<ItemStack> predicate) {
-        List<ItemStack> armor = new ArrayList<>(4);
-        for (ItemStack stack : entity.getArmorAndBodyArmorSlots()) {
-            if (predicate.test(stack)) {
-                armor.add(stack);
-            }
-        }
+        Stream<ItemStack> armor = StreamSupport.stream(entity.getArmorAndBodyArmorSlots().spliterator(), false).filter(predicate);
 
         if (FabricLoader.getInstance().isModLoaded("trinkets")) {
-            return Stream.concat(TrinketsIntegration.findAllEquippedBy(entity).filter(predicate), armor.stream());
+            return Stream.concat(TrinketsIntegration.findAllEquippedBy(entity).filter(predicate), armor);
         }
-        return armor.stream();
+        return armor;
     }
 
     @Override
