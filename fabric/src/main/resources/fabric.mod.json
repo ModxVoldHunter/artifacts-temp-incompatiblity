@@ -52,5 +52,8 @@
       "artifacts:swim_data",
       "artifacts:ability_toggles"
     ]
+  },
+  "breaks": {
+    "Legacy4J":"*"
   }
 }
